@@ -22,5 +22,6 @@
   "prefer_related_applications": false,
   "orientation": "portrait",
   "scope": "/class-and-class/",
-  "offline_enabled": true
+  "offline_enabled": true,
+  "permissions": ["storage", "unlimitedStorage"]
 }
