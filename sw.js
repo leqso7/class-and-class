@@ -1,89 +1,137 @@
-const CACHE_NAME = 'site-cache-v3';
+const CACHE_NAME = 'school-app-v1';
 const ASSETS = [
   '/class-and-class/',
   '/class-and-class/index.html',
-  '/class-and-class/request.html',
   '/class-and-class/manifest.json',
   '/class-and-class/icon-192x192.png',
   '/class-and-class/icon-512x512.png',
-  '/class-and-class/styles.css',
-  '/class-and-class/scripts.js'
+  // დავამატოთ ყველა საჭირო რესურსი
 ];
 
-self.addEventListener('install', (event) => {
+// ინსტალაციისას ქეშირება
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(ASSETS);
-      })
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', (event) => {
+// აქტივაციისას ძველი ქეშის წაშლა
+self.addEventListener('activate', event => {
   event.waitUntil(
-    Promise.all([
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      }),
-      clients.claim()
-    ])
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('firebaseio.com')) {
+// მოთხოვნების დამუშავება
+self.addEventListener('fetch', event => {
+  // ვამოწმებთ არის თუ არა ადმინ პანელის მოთხოვნა
+  if (event.request.url.includes('admin.html')) {
     event.respondWith(
       fetch(event.request)
-        .catch(() => {
-          return caches.match(event.request);
-        })
+        .catch(() => new Response('Offline mode - Admin panel not available'))
     );
     return;
   }
 
+  // დანარჩენი მოთხოვნებისთვის
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
+      .then(response => {
         if (response) {
-          return response;
+          return response; // დაბრუნება ქეშიდან თუ არსებობს
         }
 
+        // თუ არ არის ქეშში, ვცდილობთ ქსელიდან მიღებას
         return fetch(event.request)
-          .then((response) => {
-            if (!response || response.status !== 200) {
-              return response;
-            }
-
-            const responseToCache = response.clone();
+          .then(networkResponse => {
+            // ვინახავთ ქეშში
+            const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME)
-              .then((cache) => {
+              .then(cache => {
                 cache.put(event.request, responseToCache);
               });
-
-            return response;
+            return networkResponse;
           })
           .catch(() => {
-            if (event.request.mode === 'navigate') {
+            // თუ ქსელი არ არის და რესურსი არ არის ქეშში
+            if (event.request.url.includes('index.html')) {
               return caches.match('/class-and-class/index.html');
             }
+            // სხვა რესურსებისთვის ვაბრუნებთ ცარიელ პასუხს
+            return new Response();
           });
       })
   );
 });
 
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'update-cache') {
+// პერიოდული შემოწმება ადმინისტრატორის ბრძანებებისთვის
+self.addEventListener('sync', event => {
+  if (event.tag === 'check-admin-commands') {
     event.waitUntil(
-      caches.open(CACHE_NAME)
-        .then((cache) => {
-          return cache.addAll(ASSETS);
+      fetch('/admin-check')
+        .then(response => response.json())
+        .then(data => {
+          if (data.blocked) {
+            // თუ მომხმარებელი დაბლოკილია, ვშლით ქეშს
+            return caches.delete(CACHE_NAME);
+          }
+        })
+        .catch(() => {
+          // თუ შემოწმება ვერ მოხერხდა, ვაგრძელებთ მუშაობას
+          console.log('Admin check failed - continuing offline');
         })
     );
   }
+});
+
+// Service Worker-ის რეგისტრაცია
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/class-and-class/sw.js', {
+            scope: '/class-and-class/'
+        }).then(registration => {
+            console.log('SW registered: ', registration);
+        }).catch(error => {
+            console.log('SW registration failed: ', error);
+        });
+    });
+}
+
+// მოდიფიცირებული fetch ჰენდლერი
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                if (response) {
+                    return response;
+                }
+                
+                return fetch(event.request).then(
+                    function(response) {
+                        if(!response || response.status !== 200 || response.type !== 'basic') {
+                            return response;
+                        }
+
+                        var responseToCache = response.clone();
+
+                        caches.open(CACHE_NAME)
+                            .then(function(cache) {
+                                cache.put(event.request, responseToCache);
+                            });
+
+                        return response;
+                    }
+                ).catch(() => {
+                    // თუ ქსელი არ არის ხელმისაწვდომი, ვაბრუნებთ ქეშირებულ ვერსიას
+                    return caches.match('/class-and-class/index.html');
+                });
+            })
+    );
 });
