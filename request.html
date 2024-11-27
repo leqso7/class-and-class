@@ -78,12 +78,38 @@
 
         function approveAccess() {
             const uniqueCode = localStorage.getItem('lastRequestCode');
+            
+            // ვინახავთ წვდომის ინფორმაციას IndexedDB-ში
+            const request = indexedDB.open('siteAccess', 1);
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('access')) {
+                    db.createObjectStore('access', { keyPath: 'id' });
+                }
+            };
+
+            request.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction(['access'], 'readwrite');
+                const store = transaction.objectStore('access');
+                
+                // ვინახავთ წვდომის ინფორმაციას
+                store.put({
+                    id: 1,
+                    uniqueCode: uniqueCode,
+                    accessApproved: true,
+                    expirationDate: Date.now() + (365 * 24 * 60 * 60 * 1000), // 1 წელი
+                    lastUpdateTime: Date.now()
+                });
+            };
+
+            // ასევე ვინახავთ localStorage-ში
             localStorage.setItem('uniqueCode', uniqueCode);
             localStorage.setItem('accessApproved', 'true');
             localStorage.setItem('offlineAccess', 'true');
-            localStorage.setItem('remainingTime', '31536000');
-            localStorage.setItem('lastUpdateTime', Date.now().toString());
-            localStorage.setItem('siteStatus', 'counting');
+            localStorage.setItem('accessExpirationDate', (Date.now() + (365 * 24 * 60 * 60 * 1000)).toString());
+            
             window.location.href = 'index.html';
         }
 
