@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>გამარჯობა</title>
   <link rel="manifest" href="manifest.json">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     body {
           font-family: Arial, sans-serif;
@@ -290,7 +291,7 @@ background-color: #d32f2f;
 
 /* Style for enlarged groups */
 .enlarged .group {
-font-size: 35px; /* შევცვალეთ 53-დან 35-მდე */
+font-size: 35px; /* შევცვალეთ 53-დ����������� 35-მდე */
 margin-bottom: 30px;
 text-transform: uppercase;
 }
@@ -355,7 +356,7 @@ font-size: 16px;
 
 /* არსებული სტილები... */
 
-/* დავამატოთ მედია მოთხოვნები სხვადასხვა ეკრანის ზომებისთვის */
+/* დავამატოთ მედია მოთხოვნები სხვადასხვა ეკრანი��� ზომებისთვის */
 @media screen and (max-width: 768px) {
     .container {
         max-height: 85vh;
@@ -450,7 +451,7 @@ button,
     touch-action: manipulation;
 }
 
-/* გავაუმჯობესოთ სქროლი მობილურზე */
+/* გავაუმჯობესოთ სქ���ოლი მობილურზე */
 .name-list,
 .enlarged-content {
     -webkit-overflow-scrolling: touch;
@@ -590,8 +591,8 @@ button {
 
 .names-container {
   flex: 1;
-  overflow-y: auto; /* ვერტიკალური სქროლი */
-  max-height: 40vh; /* სახელების კონტეინერის მა�������სიმალური სიმაღლე */
+  overflow-y: auto; /* ვერტიკალურ�� ს�����რ���ლი */
+  max-height: 40vh; /* სახე��ების კონტეინერის მა�������სიმალური სიმაღლე */
   margin: 10px 0;
   padding-right: 5px; /* ადგილი სქროლბარისთვის */
 }
@@ -867,6 +868,7 @@ button {
   }
 }</style>
 <script type="module">
+    
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
   import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
 
@@ -885,6 +887,16 @@ button {
   // Firebase ინიციალიზაცია
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
+
+  // მაამატეთ ეს კოდი
+  getDatabase(app).setPersistenceEnabled(true)
+      .catch(function(err) {
+          if (err.code == 'failed-precondition') {
+              console.log('რამდენიმე ჩანართია გახსნილი, persistence შეიძლება ჩართული იყოს მხოლოდ ერთ ჩანართში.');
+          } else if (err.code == 'unimplemented') {
+              console.log('ბრაუზერს არ აქვს persistence-ის მხარდაჭერა');
+          }
+      });
 
   // მომხმარებლის სტატუსის შემოწმება
   function checkUserAccess() {
@@ -927,6 +939,13 @@ button {
 
   // საწყისი შემოწმება
   document.addEventListener('DOMContentLoaded', () => {
+      // დაამატეთ ეს კოდი აქ
+      let isFirstVisit = localStorage.getItem('isFirstVisit') === null;
+      if (isFirstVisit) {
+          localStorage.setItem('isFirstVisit', 'false');
+      }
+      
+      // არსებული კოდი
       checkUserAccess();
       updateUserActivity();
   });
@@ -1126,7 +1145,7 @@ button {
   }
   
   document.addEventListener('DOMContentLoaded', function() {
-    // აქ უნდა იყოს თქვენი კოდის დანარჩენი ნაწილ
+    // აქ უნდა იყო��� თქვენი კოდის დანარჩენი ნაწილ
   });
     let students = [];
     let availableStudents = [];
@@ -1278,7 +1297,7 @@ button {
     function distributeGroups(groupSize) {
     // Prevent group creation if group size equals or is greater than the number of students
     if (groupSize >= students.length) {
-        alert(`გუფი ვერ შეიქმნება ${groupSize}-იანი, მოსწავლეების რაოდენბა ძალიან ცოტაა.`);
+        alert(`გუფი ვერ შეიქმნება ${groupSize}-იანი, მოსწავ��ეების ���აოდენბა ძალიან ცოტაა.`);
         return;
     }
   
@@ -1504,7 +1523,7 @@ button {
               return;
           }
   
-          timerElement.textContent = `დრო: ${countdownTime} წ��მი`;
+          timerElement.textContent = `დრო: ${countdownTime} წმი`;
           
           countdownTime--;
           localStorage.setItem('remainingTime', countdownTime);
@@ -1520,7 +1539,7 @@ button {
       // localStorage.removeItem('countdownTime');
   });
   
-  // დავამაოთ ტაიერის ელემენტ��� HTML-ში თუ არ არსებობს
+  // დავამაოთ ტა��ერის ე���ემენტ��� HTML-ში თუ არ ���რსებობს
   if (!document.getElementById('timer')) {
       const timerElement = document.createElement('div');
       timerElement.id = 'timer';
@@ -1597,7 +1616,7 @@ button {
   // გვერდის ჩატვირთვისას შვამოწმოთ საიტის მდგომარეობა
   document.addEventListener('DOMContentLoaded', checkSiteStatus);
   
-  // CSS სტილები (დაამატეთ თქვენს არსებულ CSS-ს)
+  // CSS სტილები (დაამატეთ თქვენ��� არსებულ CSS-ს)
   /*
   #groupSizeOptions button.recommended {
     background-color: #28a745; // მწვანე
@@ -1782,7 +1801,7 @@ button {
             alert('შაბლონები წარმატებით დიმპორტდა!');
             // განაახლეთ ინტერფეისი საჭიოების შემთხვევაში
         } catch (error) {
-            alert('შ��ცდომა შაბლონების იმპორტისას. გთხოვთ, შეამოწმეთ ფაილი.');
+            alert('შ����დომა შაბლონების იმპორტისას. გთხოვთ, შეამოწმეთ ფაილი.');
         }
     };
     reader.readAsText(file);
@@ -1859,7 +1878,7 @@ button {
     input.click();
   }
   
-  // დავამატოთ ეს ფუნქცია, რომ ავტომ��ტურად დავტვირთოთ შაბლონები
+  // დავამატოთ ეს ფუნქცია, რომ ავტომ��ტურა�� დავტვირთოთ შაბლონები
   function loadTemplates() {
     templates = JSON.parse(localStorage.getItem('templates')) || {};
   }
@@ -1983,7 +2002,7 @@ button {
       updateButtonHighlighting();
     }
   
-    // ახალი ფუნქცია შაბლოები წაშლი დიალოგის გამოსაჩენად
+    // ახალი ფუნქცია შაბლოები წაშლი დიალოგის გამ���საჩენად
     function showDeleteTemplateDialog() {
       const dialog = document.createElement('div');
       dialog.style.position = 'fixed';
@@ -2074,7 +2093,7 @@ button {
     }
   
   
-    // ��ოკალუ�� მეხსიერებაში ვინახავთ გამოყენებულ პაროლებს
+    // ��ოკალუ�� მეხსიერებაში ვინახავთ გამოყენებულ პა��ოლებს
     let usedPasswords = JSON.parse(localStorage.getItem('usedPasswords')) || [];
   
     function checkPassword() {
@@ -2233,7 +2252,7 @@ button {
       templateNameInput.style.cssText = styles.input;
   
       const namesTextarea = document.createElement('textarea');
-      namesTextarea.placeholder = 'შეიყვანეთ სახელები და გვარები (თითო ხაზ��ე ერთი) ';
+      namesTextarea.placeholder = 'შეიყვანეთ სახე��ები და გვარები (თითო ხაზ��ე ერთი) ';
       namesTextarea.style.cssText = styles.input + 'height: 150px; resize: vertical;';
   
       const saveButton = document.createElement('button');
@@ -2408,7 +2427,7 @@ button {
           nameList.style.webkitOverflowScrolling = 'touch';
       }
       
-      // ვაუმჯობესებთ ილაკეის რესპონსივობას
+      // ვაუმჯო��ესებთ ილაკეის რესპონსივობას
       const buttons = document.querySelectorAll('button');
       buttons.forEach(button => {
           button.addEventListener('touchstart', function(e) {
@@ -2732,7 +2751,7 @@ button {
   
   function displayGroups(groups) {
       const groupsHTML = groups.map((group, index) => 
-          `<div class="group">ჯგუფი ${index + 1}: ${group.join(', ')}</div>`
+          `<div class="group">ჯგუ��ი ${index + 1}: ${group.join(', ')}</div>`
       ).join('');
   
       groupsList.innerHTML = groupsHTML;
