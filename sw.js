@@ -1,4 +1,4 @@
-const CACHE_NAME = 'site-cache-v2';
+const CACHE_NAME = 'site-cache-v3';
 const ASSETS = [
   '/class-and-class/',
   '/class-and-class/index.html',
@@ -7,9 +7,7 @@ const ASSETS = [
   '/class-and-class/icon-192x192.png',
   '/class-and-class/icon-512x512.png',
   '/class-and-class/styles.css',
-  '/class-and-class/scripts.js',
-  'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js'
+  '/class-and-class/scripts.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -22,21 +20,33 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      clients.claim()
+    ])
   );
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.url.includes('firebaseio.com')) {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -46,14 +56,7 @@ self.addEventListener('fetch', (event) => {
 
         return fetch(event.request)
           .then((response) => {
-            if (event.request.url.includes('firebaseio.com')) {
-              return response;
-            }
-
             if (!response || response.status !== 200) {
-              if (event.request.mode === 'navigate') {
-                return caches.match('/class-and-class/index.html');
-              }
               return response;
             }
 
@@ -72,4 +75,15 @@ self.addEventListener('fetch', (event) => {
           });
       })
   );
+});
+
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'update-cache') {
+    event.waitUntil(
+      caches.open(CACHE_NAME)
+        .then((cache) => {
+          return cache.addAll(ASSETS);
+        })
+    );
+  }
 });
