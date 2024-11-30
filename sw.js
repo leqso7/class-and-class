@@ -1,137 +1,92 @@
-const CACHE_NAME = 'school-app-v1';
-const ASSETS = [
-  '/class-and-class/',
-  '/class-and-class/index.html',
-  '/class-and-class/manifest.json',
-  '/class-and-class/icon-192x192.png',
-  '/class-and-class/icon-512x512.png',
-  // დავამატოთ ყველა საჭირო რესურსი
+const CACHE_NAME = 'student-selector-v1';
+const ASSETS_TO_CACHE = [
+  './',
+  './index.html',
+  './icon-192x192.png',
+  './icon-512x512.png',
+  './manifest.json'
 ];
 
-// ინსტალაციისას ქეშირება
-self.addEventListener('install', event => {
+// Service Worker-ის ინსტალაცია
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting())
-  );
-});
-
-// აქტივაციისას ძველი ქეშის წაშლა
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-// მოთხოვნების დამუშავება
-self.addEventListener('fetch', event => {
-  // ვამოწმებთ არის თუ არა ადმინ პანელის მოთხოვნა
-  if (event.request.url.includes('admin.html')) {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => new Response('Offline mode - Admin panel not available'))
-    );
-    return;
-  }
-
-  // დანარჩენი მოთხოვნებისთვის
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response; // დაბრუნება ქეშიდან თუ არსებობს
-        }
-
-        // თუ არ არის ქეშში, ვცდილობთ ქსელიდან მიღებას
-        return fetch(event.request)
-          .then(networkResponse => {
-            // ვინახავთ ქეშში
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-            return networkResponse;
-          })
-          .catch(() => {
-            // თუ ქსელი არ არის და რესურსი არ არის ქეშში
-            if (event.request.url.includes('index.html')) {
-              return caches.match('/class-and-class/index.html');
-            }
-            // სხვა რესურსებისთვის ვაბრუნებთ ცარიელ პასუხს
-            return new Response();
-          });
+      .then((cache) => {
+        console.log('Opened cache');
+        return cache.addAll(ASSETS_TO_CACHE);
+      })
+      .catch((error) => {
+        console.error('Cache installation failed:', error);
       })
   );
 });
 
-// პერიოდული შემოწმება ადმინისტრატორის ბრძანებებისთვის
-self.addEventListener('sync', event => {
-  if (event.tag === 'check-admin-commands') {
-    event.waitUntil(
-      fetch('/admin-check')
-        .then(response => response.json())
-        .then(data => {
-          if (data.blocked) {
-            // თუ მომხმარებელი დაბლოკილია, ვშლით ქეშს
-            return caches.delete(CACHE_NAME);
+// ქეშის აქტივაცია და ძველი ქეშის წაშლა
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
           }
         })
-        .catch(() => {
-          // თუ შემოწმება ვერ მოხერხდა, ვაგრძელებთ მუშაობას
-          console.log('Admin check failed - continuing offline');
-        })
-    );
-  }
+      );
+    })
+  );
 });
 
-// Service Worker-ის რეგისტრაცია
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/class-and-class/sw.js', {
-            scope: '/class-and-class/'
-        }).then(registration => {
-            console.log('SW registered: ', registration);
-        }).catch(error => {
-            console.log('SW registration failed: ', error);
-        });
-    });
-}
+// ქეშიდან მოთხოვნების დამუშავება
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
 
-// მოდიფიცირებული fetch ჰენდლერი
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    return response;
-                }
-                
-                return fetch(event.request).then(
-                    function(response) {
-                        if(!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
+        return fetch(event.request)
+          .then((response) => {
+            // Check if we received a valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
 
-                        var responseToCache = response.clone();
+            // Clone the response
+            const responseToCache = response.clone();
 
-                        caches.open(CACHE_NAME)
-                            .then(function(cache) {
-                                cache.put(event.request, responseToCache);
-                            });
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
 
-                        return response;
-                    }
-                ).catch(() => {
-                    // თუ ქსელი არ არის ხელმისაწვდომი, ვაბრუნებთ ქეშირებულ ვერსიას
-                    return caches.match('/class-and-class/index.html');
-                });
-            })
-    );
+            return response;
+          })
+          .catch(() => {
+            // Return a fallback response for offline access
+            return new Response('ოფლაინ რეჟიმი', {
+              status: 200,
+              headers: { 'Content-Type': 'text/plain' }
+            });
+          });
+      })
+  );
+});// sw.js ფაილში დავამატოთ მეტი logging
+self.addEventListener('install', (event) => {
+  console.log('🔧 Service Worker: ინსტალაცია დაიწყო');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('📦 Service Worker: ქეშის შექმნა დაიწყო');
+        return cache.addAll(ASSETS_TO_CACHE);
+      })
+      .then(() => {
+        console.log('✅ Service Worker: ყველა ფაილი წარმატებით დაქეშირდა');
+      })
+      .catch((error) => {
+        console.error('❌ Service Worker: ქეშირების შეცდომა:', error);
+      })
+  );
 });
