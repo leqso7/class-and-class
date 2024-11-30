@@ -1,92 +1,99 @@
-const CACHE_NAME = 'student-selector-v1';
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './icon-192x192.png',
-  './icon-512x512.png',
-  './manifest.json'
+const CACHE_NAME = 'site-cache-v1';
+const ASSETS = [
+    '/class-and-class/',
+    '/class-and-class/index.html',
+    '/class-and-class/request.html',
+    '/class-and-class/manifest.json',
+    '/class-and-class/icon-192x192.png',
+    '/class-and-class/icon-512x512.png'
 ];
 
 // Service Worker-ის ინსტალაცია
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
-      .catch((error) => {
-        console.error('Cache installation failed:', error);
-      })
-  );
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('ქეშის გახსნა');
+                return cache.addAll(ASSETS);
+            })
+            .then(() => {
+                console.log('რესურსები დაქეშილია');
+                return self.skipWaiting();
+            })
+    );
 });
 
-// ქეშის აქტივაცია და ძველი ქეშის წაშლა
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+// აქტივაციის დროს ძველი ქეშის წაშლა
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cache => {
+                    if (cache !== CACHE_NAME) {
+                        console.log('ძ��ელი ქეშის წაშლა:', cache);
+                        return caches.delete(cache);
+                    }
+                })
+            );
+        }).then(() => {
+            console.log('Service Worker აქტიურია');
+            return self.clients.claim();
         })
-      );
-    })
-  );
+    );
 });
 
-// ქეშიდან მოთხოვნების დამუშავება
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
+// fetch მოთხოვნების დამუშავება
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                // დაბრუნება ქეშიდან თუ არსებობს
+                if (response) {
+                    return response;
+                }
+                // თუ არ არის ქეშში, მოთხოვნა სერვერზე
+                return fetch(event.request)
+                    .then(response => {
+                        // შემოწმება არის თუ არა მოთხოვნა წარმატებული
+                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                            return response;
+                        }
+                        // ქეშირება
+                        const responseToCache = response.clone();
+                        caches.open(CACHE_NAME)
+                            .then(cache => {
+                                cache.put(event.request, responseToCache);
+                            });
+                        return response;
+                    });
+            })
+            .catch(() => {
+                // ოფლაინ რეჟიმში დაბრუნება
+                return new Response('ოფლაინ რეჟიმი', {
+                    status: 503,
+                    statusText: 'Service Unavailable'
+                });
+            })
+    );
+});
 
-        return fetch(event.request)
-          .then((response) => {
-            // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
+// push ნოტიფიკაციების დამუშავება
+self.addEventListener('push', event => {
+    const options = {
+        body: event.data.text(),
+        icon: '/class-and-class/icon-192x192.png',
+        badge: '/class-and-class/icon-192x192.png'
+    };
 
-            // Clone the response
-            const responseToCache = response.clone();
+    event.waitUntil(
+        self.registration.showNotification('შეტყობინება', options)
+    );
+});
 
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(() => {
-            // Return a fallback response for offline access
-            return new Response('ოფლაინ რეჟიმი', {
-              status: 200,
-              headers: { 'Content-Type': 'text/plain' }
-            });
-          });
-      })
-  );
-});// sw.js ფაილში დავამატოთ მეტი logging
-self.addEventListener('install', (event) => {
-  console.log('🔧 Service Worker: ინსტალაცია დაიწყო');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('📦 Service Worker: ქეშის შექმნა დაიწყო');
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
-      .then(() => {
-        console.log('✅ Service Worker: ყველა ფაილი წარმატებით დაქეშირდა');
-      })
-      .catch((error) => {
-        console.error('❌ Service Worker: ქეშირების შეცდომა:', error);
-      })
-  );
+// ნოტიფიკაციაზე დაკლიკების დამუშავება
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow('/class-and-class/')
+    );
 });
