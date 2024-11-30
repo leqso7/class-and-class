@@ -1,22 +1,28 @@
 {
-  "name": "Class and Class",
-  "short_name": "Class",
-  "start_url": "/class-and-class/",
-  "scope": "/class-and-class/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "icons": [
-    {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "offline_enabled": true
-}
+    "name": "გამარჯობა",
+    "short_name": "გამარჯობა",
+    "start_url": "/class-and-class/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4CAF50",
+    "icons": [
+      {
+        "src": "/class-and-class/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/class-and-class/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ],
+    "prefer_related_applications": false,
+    "orientation": "portrait",
+    "scope": "/class-and-class/",
+    "offline_enabled": true,
+    "permissions": ["storage", "unlimitedStorage"]
+  }
+  
