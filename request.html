@@ -7,7 +7,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getDatabase, ref, push, onValue } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+        import { getDatabase, ref, push, onValue, update } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAAFv9qvvt6QrV-WwUaBD8SS1eOZAhw-hE",
@@ -26,6 +26,15 @@
 
         // გლობალური ცვლადი მოთხოვნის ID-სთვის
         let currentRequestId = null;
+
+        let isRedirecting = false;
+
+        function safeRedirect(url) {
+            if (!isRedirecting) {
+                isRedirecting = true;
+                window.location.replace(url);
+            }
+        }
 
         window.sendRequest = async function() {
             const requestButton = document.getElementById('requestButton');
@@ -68,10 +77,39 @@
         }
 
         function approveAccess() {
+            const uniqueCode = localStorage.getItem('lastRequestCode');
+            
+            // ვინახავთ წვდომის ინფორმაციას IndexedDB-ში
+            const request = indexedDB.open('siteAccess', 1);
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('access')) {
+                    db.createObjectStore('access', { keyPath: 'id' });
+                }
+            };
+
+            request.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction(['access'], 'readwrite');
+                const store = transaction.objectStore('access');
+                
+                // ვინახავთ წვდომის ინფორმაციას
+                store.put({
+                    id: 1,
+                    uniqueCode: uniqueCode,
+                    accessApproved: true,
+                    expirationDate: Date.now() + (365 * 24 * 60 * 60 * 1000), // 1 წელი
+                    lastUpdateTime: Date.now()
+                });
+            };
+
+            // ასევე ვინახავთ localStorage-ში
+            localStorage.setItem('uniqueCode', uniqueCode);
             localStorage.setItem('accessApproved', 'true');
-            localStorage.setItem('remainingTime', '31536000'); // 1 წელი
-            localStorage.setItem('lastUpdateTime', Date.now().toString());
-            localStorage.setItem('siteStatus', 'counting'); // დავამატოთ სტატუსი
+            localStorage.setItem('offlineAccess', 'true');
+            localStorage.setItem('accessExpirationDate', (Date.now() + (365 * 24 * 60 * 60 * 1000)).toString());
+            
             window.location.href = 'index.html';
         }
 
@@ -112,13 +150,44 @@
             }
         });
 
-        // დავამატოთ ფუნქცია წვდომის შემოწმებისთვის
-        const accessApproved = localStorage.getItem('accessApproved');
-        const siteStatus = localStorage.getItem('siteStatus');
-        
-        // თუ წვდომა უკვე აქვს და საიტი არ არის shutdown მდგომარეობაში
-        if (accessApproved && siteStatus !== 'shutdown') {
-            window.location.href = 'index.html';
+        // ერთი მთავარი ფუნქცია შემოწმებისთვის
+        function checkAccessStatus() {
+            const accessApproved = localStorage.getItem('accessApproved');
+            const siteStatus = localStorage.getItem('siteStatus');
+            const uniqueCode = localStorage.getItem('uniqueCode');
+            
+            // თუ წვდომა აქვს და საიტი არ არის shutdown
+            if (accessApproved && siteStatus !== 'shutdown' && uniqueCode) {
+                if (window.location.pathname.includes('request.html')) {
+                    window.location.replace('index.html');
+                }
+            } else {
+                if (!window.location.pathname.includes('request.html')) {
+                    window.location.replace('request.html');
+                }
+            }
+        }
+
+        // ერთხე შემოწმება ჩატვირთვისას
+        document.addEventListener('DOMContentLoaded', checkAccessStatus);
+
+        // პერიოდული შემოწმება უფრო დიდი ინტერვალით
+        setInterval(checkAccessStatus, 30000);
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/class-and-class/sw.js', {
+                    scope: '/class-and-class/'
+                })
+                .then(registration => {
+                    console.log('ServiceWorker დარეგისტრირდა:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker რეგისტრაცია ვერ მოხერხდა:', error);
+                });
+            });
         }
     </script>
 
@@ -255,7 +324,6 @@
             transform: scale(1.05);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
         }
-
         .modal {
             display: none;
             position: fixed;
@@ -384,6 +452,12 @@
             }
         }
     </style>
+
+    <link rel="manifest" href="/class-and-class/manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+    <link rel="apple-touch-icon" href="/class-and-class/icon-192x192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 <body>
     <a href="https://www.facebook.com/groups/2996566913830378" target="_blank" class="facebook-logo"></a>
@@ -405,7 +479,7 @@
             <h2>როგრ მივიღოთ წვდომა საიტზე</h2>
             <ol>
                 <li>გადარიცხეთ თანხა შემდეგ პირად ნომერზე: <strong>20001019597</strong></li>
-                <li>დააჭირეთ ღილაკს "მოთხოვნის გაგზავნა"</li>
+                <li>დააჭირეთ ღილაკს "ოხოვნის გაგზავნა"</li>
                 <li>დაიმახსოვრეთ თქვენთვის მინიჭებული უნიკალური კოდი</li>
                 <li>გადაგზავნეთ უნიალური კოდი ჩვენს <a href="https://www.facebook.com/groups/2996566913830378" target="_blank">Facebook გვერდზე</a></li>
                 <li>დაელოდეთ დადასტურებას, რის შემდეგაც ავტომატურად გადახვალთ საიტზე</li>
