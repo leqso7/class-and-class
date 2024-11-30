@@ -957,6 +957,18 @@ box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 დექსტოპზე დამატება
 </button>
 <script>
+    
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/class-and-class/sw.js')
+            .then((registration) => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch((err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
 
     // "დექსტოპზე დამატების" ლოგიკა
     let deferredPrompt;
@@ -2781,17 +2793,6 @@ function initializeButtons() {
     
 </script>
 <script>
-        if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((registration) => {
-                    console.log('ServiceWorker registration successful');
-                })
-                .catch((err) => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-        });
-    }
 // დავამატოთ სტილიზებული კონსოლ ლოგები
 const logger = {
     success: (msg) => console.log(`%c✅ ${msg}`, 'color: #4CAF50; font-weight: bold;'),
