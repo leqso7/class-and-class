@@ -30,7 +30,7 @@ self.addEventListener('activate', event => {
             return Promise.all(
                 cacheNames.map(cache => {
                     if (cache !== CACHE_NAME) {
-                        console.log('ძ��ელი ქეშის წაშლა:', cache);
+                        console.log('ძელი ქეშის წაშლა:', cache);
                         return caches.delete(cache);
                     }
                 })
@@ -81,8 +81,8 @@ self.addEventListener('fetch', event => {
 self.addEventListener('push', event => {
     const options = {
         body: event.data.text(),
-        icon: '/class-and-class/icon-192x192.png',
-        badge: '/class-and-class/icon-192x192.png'
+        icon: './icon-192x192.png',
+        badge: './icon-192x192.png'
     };
 
     event.waitUntil(
@@ -94,6 +94,6 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
     event.notification.close();
     event.waitUntil(
-        clients.openWindow('/class-and-class/')
+        clients.openWindow('./')
     );
 });
