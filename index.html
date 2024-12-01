@@ -11,12 +11,40 @@
     <meta name="apple-mobile-web-app-title" content="შერჩევა">
     
     <!-- PWA ლინკები -->
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="./icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
         <title>სტუდენტების შერჩევა</title>
         <style>
+      @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background: linear-gradient(45deg, 
+            rgba(255, 0, 79, 0.6), 
+            rgba(255, 115, 0, 0.6), 
+            rgba(255, 235, 0, 0.6), 
+            rgba(63, 255, 108, 0.6), 
+            rgba(0, 168, 255, 0.6));
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+    }
       body {
           font-family: Arial, sans-serif;
           display: flex;
@@ -303,7 +331,7 @@ border-radius: 5px;
 
 /* Style for enlarged groups */
 .enlarged .group {
-  font-size: 35px; /* შევცვალეთ 53-დან 35-მდე */
+  font-size: 35px; /* შევცვალეთ 53-დან 35-მდ�� */
   margin-bottom: 30px;
   text-transform: uppercase;
 }
@@ -450,7 +478,7 @@ font-size: 16px;
       height: -webkit-fill-available;
   }
 
-  /* შევამციროთ სქროლის საჭიროება */
+  /* შე���ამციროთ სქროლის საჭიროება */
   .name-list {
       max-height: 50vh;
   }
@@ -1053,7 +1081,7 @@ alert('ყველა პაროლი განულებულია.');
 async function checkIfAllPasswordsUsed() {
 const usedPasswords = await getUsedPasswords();
 if (usedPasswords.length === passwords.length) {
-  alert('ყველა პაროლი გამოყენებულია. გთოვთ, დაუკავშირდეთ ადმინისტრატორს.');
+  alert('ყველა პაროლი გამოყენებულია. გთოოვთ, დაუკავშირდეთ ადმინისტრატორს.');
   // აქ შეგიძლიათ დაამატოთ დამატებითი ლოგიკა, მაგლითად, სიტის დაბლოკვა
 }
 }
@@ -1812,7 +1840,7 @@ function loadTemplates() {
   templates = JSON.parse(localStorage.getItem('templates')) || {};
 }
 
-// გამოვიძახოთ ეს ფუნქცია გვერდის ჩატვირთვისას
+// გამოვიძახოთ ეს ფუნქცია გვერდის ჩატ���ირთვისას
 document.addEventListener('DOMContentLoaded', function() {
   loadTemplates();
   checkSiteStatus();
@@ -1931,7 +1959,7 @@ function distributeGroups(groupSize) {
     updateButtonHighlighting();
   }
 
-  // ახალი ფუნქცია შაბლოები წაშლი დიალოგის გამოსაჩენად
+  // ახალი ფუ��ქცია შაბლოები წაშლი დიალოგის გამოსაჩენად
   function showDeleteTemplateDialog() {
     const dialog = document.createElement('div');
     dialog.style.position = 'fixed';
@@ -2803,7 +2831,27 @@ const logger = {
 
 // ონლაინ/ოფლაინ სტატუსის მონიტორინგი
 function updateOnlineStatus() {
-    const status = document.getElementById('connectionStatus');
+    // შევქმნათ ან მოვძებნოთ სტატუსის ელემენტი
+    let status = document.getElementById('connectionStatus');
+    
+    // თუ ელემენტი არ არსებობს, შევქმნათ
+    if (!status) {
+        status = document.createElement('div');
+        status.id = 'connectionStatus';
+        status.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+            font-family: Arial, sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        `;
+        document.body.appendChild(status);
+    }
     
     if (navigator.onLine) {
         status.style.display = 'block';
@@ -2845,7 +2893,7 @@ async function checkCacheStatus() {
     try {
         const cache = await caches.open('student-selector-v1');
         const keys = await cache.keys();
-        logger.info(`ქეშირებული რესურსების რაოდენობა: ${keys.length}`);
+        logger.info(`ქ��შირებული რესურსების რაოდენობა: ${keys.length}`);
         keys.forEach(request => {
             logger.info(`ქეშირებული: ${request.url}`);
         });
@@ -2897,6 +2945,21 @@ setInterval(async () => {
     await checkCacheStatus();
 }, 30000); // ყოველ 30 წამში ერთხელ
 
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/class-and-class/sw.js', {
+                scope: '/class-and-class/'
+            })
+            .then(registration => {
+                console.log('ServiceWorker დარეგისტრირდა:', registration.scope);
+            })
+            .catch(error => {
+                console.log('ServiceWorker რეგისტრაცია ვერ მოხერხდა:', error);
+            });
+        });
+    }
 </script>
 </body>
 
