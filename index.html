@@ -1,50 +1,14 @@
-<html lang="ka">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<html lang="ka"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"><title>სტუდენტების შერჩევა</title>
     
-    <!-- PWA მეტა თეგები -->
-    <meta name="theme-color" content="#007bff">
-    <meta name="description" content="სტუდენტების შემთხვევითი შერჩევის აპლიკაცია">
+    <!-- დავამატოთ PWA მეტა თეგები -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="შერჩევა">
+    <meta name="apple-mobile-web-app-title" content="სტუდენტების შერჩევა">
+    <link rel="apple-touch-icon" href="/icon-192x192.png">
     
-    <!-- PWA ლინკები -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
-        <title>სტუდენტების შერჩევა</title>
-        <style>
-      @keyframes gradient {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        background: linear-gradient(45deg, 
-            rgba(255, 0, 79, 0.6), 
-            rgba(255, 115, 0, 0.6), 
-            rgba(255, 235, 0, 0.6), 
-            rgba(63, 255, 108, 0.6), 
-            rgba(0, 168, 255, 0.6));
-        background-size: 400% 400%;
-        animation: gradient 15s ease infinite;
-    }
+    <style>
       body {
           font-family: Arial, sans-serif;
           display: flex;
@@ -331,7 +295,7 @@ border-radius: 5px;
 
 /* Style for enlarged groups */
 .enlarged .group {
-  font-size: 35px; /* შევცვალეთ 53-დან 35-მდ�� */
+  font-size: 35px; /* შევცვალეთ 53-და��� 35-მდე */
   margin-bottom: 30px;
   text-transform: uppercase;
 }
@@ -478,7 +442,7 @@ font-size: 16px;
       height: -webkit-fill-available;
   }
 
-  /* შე���ამციროთ სქროლის საჭიროება */
+  /* შევამციროთ სქროლის საჭიროება */
   .name-list {
       max-height: 50vh;
   }
@@ -618,7 +582,7 @@ font-size: 16px;
       box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
   }
 
-  /* დახურვის ღილაკიც მწვანე გავხადოთ */
+  /* დახურვი��� ღილაკიც მწვანე გავხადოთ */
   .close-button {
       color: #28a745;
       transition: all 0.3s ease;
@@ -907,7 +871,49 @@ font-size: 16px;
         padding: 15px;
     }
 }
-  </style></head>
+  </style>
+  <style>
+    /* existing styles... */
+    
+    /* PWA install button styles */
+    #addBtn {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 1000;
+        display: none;
+    }
+
+    #addBtn:hover {
+        background-color: #45a049;
+    }
+
+    #installPWA:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        background: linear-gradient(145deg, #1E88E5, #1565C0);
+    }
+
+    #installPWA:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+        #installPWA {
+            width: 100%;
+            margin: 5px 0;
+        }
+    }
+</style>
+</head>
   
   
   
@@ -945,6 +951,27 @@ font-size: 16px;
           <input type="text" id="nameInput" placeholder="შეიყვანეთ მოსწავლის სახელი">
           <button id="addNameButton">დამატება</button>
       </div>
+      <!-- PWA Install Button -->
+      <button id="installPWA" style="
+          background: linear-gradient(145deg, #2196F3, #1976D2);
+          color: white;
+          border: none;
+          border-radius: 5px;
+          padding: 10px 20px;
+          margin: 10px auto;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          transition: all 0.3s ease;
+      ">
+          <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M19,20H5V4H7V7H17V4H19M12,2A1,1 0 0,1 13,3A1,1 0 0,1 12,4A1,1 0 0,1 11,3A1,1 0 0,1 12,2M12,17A1,1 0 0,1 13,18A1,1 0 0,1 12,19A1,1 0 0,1 11,18A1,1 0 0,1 12,17Z" />
+          </svg>
+          აპლიკაციის დამატება
+      </button>
       <button id="selectStudentButton">მოოსწავლის არჩევა</button>
       <button id="pairStudentsButton" class="pairing-button">კლასების დამატება</button>
       <div id="nameCounter">სულ სტუდენტები:</div>
@@ -966,63 +993,19 @@ font-size: 16px;
       </div>
       <!-- HTML ნაწილში დავამატოთ გადიდების ღილაკი -->
   </div>
-  <!-- დავამატოთ ინსტალაციის ღილაკი -->
-<button id="installButton" style="
-position: fixed;
-bottom: 20px;
-left: 20px;
-z-index: 9999;
-padding: 10px 20px;
-background-color: #007bff;
-color: white;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-display: none;
-font-family: Arial, sans-serif;
-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-">
-დექსტოპზე დამატება
-</button>
 <script>
-    
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((registration) => {
-                    console.log('ServiceWorker registration successful');
-                })
-                .catch((err) => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-        });
-    }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
 
-    // "დექსტოპზე დამატების" ლოგიკა
-    let deferredPrompt;
-    const installButton = document.getElementById('installButton');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installButton.style.display = 'block';
-    });
-
-    installButton.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('აპლიკაცია დაემატა');
-            }
-            deferredPrompt = null;
-            installButton.style.display = 'none';
-        }
-    });
-    window.addEventListener('appinstalled', () => {
-        installButton.style.display = 'none';
-        console.log('აპლიკაცია წარმატებით დაინსტალირდა');
-    });
   const JSONBIN_API_KEY = '$2a$10$irNeeadxzMPL4iu242bQp..s2Ebyna0Df.f8oblrkk1UZPC2171Le';
 const JSONBIN_BIN_ID = '6710f973e41b4d34e44455fa';
 
@@ -1081,7 +1064,7 @@ alert('ყველა პაროლი განულებულია.');
 async function checkIfAllPasswordsUsed() {
 const usedPasswords = await getUsedPasswords();
 if (usedPasswords.length === passwords.length) {
-  alert('ყველა პაროლი გამოყენებულია. გთოოვთ, დაუკავშირდეთ ადმინისტრატორს.');
+  alert('ყველა პაროლი გამოყენებულია. გთოვთ, დაუკავშირდეთ ადმინისტრატორს.');
   // აქ შეგიძლიათ დაამატოთ დამატებითი ლოგიკა, მაგლითად, სიტის დაბლოკვა
 }
 }
@@ -1334,7 +1317,7 @@ function updateButtonHighlighting() {
 function distributeGroups(groupSize) {
   // Prevent group creation if conditions are not met
   if (groupSize < 2 || groupSize > 7 || students.length < 4 || students.length > 30) {
-      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 30-მდე მოსწავლე და 2-დან 7-მდე ჯგუფის ზომსთვის.`);
+      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 30-მდე სტუდენტისთვის და 2-დან 7-მდე ჯგუფის ზომსთვის.`);
       return;
   }
 
@@ -1364,7 +1347,7 @@ function distributeGroups(groupSize) {
 function distributeGroups(groupSize) {
   // Prevent group creation if conditions are not met
   if (groupSize < 2 || groupSize > 7 || students.length < 4 || students.length > 30) {
-      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 30-მდე მოსწავლისთვის და 2-დან 7-მდე ჯგუფის ზომსთვის.`);
+      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 30-მდე სტუდენტისთვის და 2-დან 7-მდე ჯგუფის ზომსთვის.`);
       return;
   }
 
@@ -1490,7 +1473,7 @@ function startCountdown() {
     timerInterval = setInterval(updateTimer, 1000);
 }
 
-// დავამატოთ ეს ფუნქცია localStorage-ის ასასუფთავებლად როდესაც გვერდი იხურება
+// დავამატოთ ეს ფუნქცია localStorage-ის ასასუფთავებლად როდესაც გვერ��ი იხურება
 window.addEventListener('beforeunload', function() {
     // არ წავშალოთ countdownTime
     // localStorage.removeItem('countdownTime');
@@ -1584,9 +1567,9 @@ document.addEventListener('DOMContentLoaded', checkSiteStatus);
   color: white;
 }
 */function distributeGroups(groupSize) {
-  // შევამოწმოთ, რომ ტუდენტების რაოდენობა 5-დან 35-მდეა
+  // შევამოწმოთ, რომ ტუდენტების რაო���ენობა 5-დან 35-მდეა
   if (students.length < 4 || students.length > 50) {
-      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 35-დე მოსწავლისთვის.`);
+      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 35-დე სტუდენტისთვის.`);
       return;
   }
 
@@ -1706,7 +1689,7 @@ function updateButtonHighlighting() {
       if (students.length >= 5 && students.length <= 50 && size >= 2 && size <= 7) {
           if (students.length % size === 0) {
               button.classList.add('recommended', 'pulse');
-              button.title = `${students.length / size} ჯგუფი, თითოეულში ${size} მოსწავლით`;
+              button.title = `${students.length / size} ჯგუფი, თითოეულში ${size} სტუდენტით`;
           } else {
               button.classList.add('not-recommended');
               button.title = 'არათანაბარი განაწილება';
@@ -1840,7 +1823,7 @@ function loadTemplates() {
   templates = JSON.parse(localStorage.getItem('templates')) || {};
 }
 
-// გამოვიძახოთ ეს ფუნქცია გვერდის ჩატ���ირთვისას
+// გამოვიძახოთ ეს ფუნქცია გვერდის ჩატვირთვისას
 document.addEventListener('DOMContentLoaded', function() {
   loadTemplates();
   checkSiteStatus();
@@ -1869,7 +1852,7 @@ function updateButtonHighlighting() {
 // მოდიფიცირებული distributeGroups ფუნქცია
 function distributeGroups(groupSize) {
   if (students.length < 5 || students.length > 50) {
-      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 35-მდე  მოსწავლისთვის.`);
+      alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 35-მდე სტუდენტისთვის.`);
       return;
   }
 
@@ -1959,7 +1942,7 @@ function distributeGroups(groupSize) {
     updateButtonHighlighting();
   }
 
-  // ახალი ფუ��ქცია შაბლოები წაშლი დიალოგის გამოსაჩენად
+  // ახალი ფუნქცია შაბლოები წაშლი დიალოგის გამოსაჩენად
   function showDeleteTemplateDialog() {
     const dialog = document.createElement('div');
     dialog.style.position = 'fixed';
@@ -2228,10 +2211,10 @@ function distributeGroups(groupSize) {
         if (templateName && names.length > 0) {
             templates[templateName] = names;
             localStorage.setItem('templates', JSON.stringify(templates));
-            alert(`შაბლონი "${templateName}" დამატებულია ${names.length} მოსწავლით`);
+            alert(`შაბლონი "${templateName}" დამატებულია ${names.length} სტუდენტით`);
             document.body.removeChild(dialog);
         } else {
-            alert('გთხოვთ, შეავსოთ კლასის სახელი და დაამატოთ მინიმუმ ერთი მოსწავლით');
+            alert('გთხოვთ, შეავსოთ კლასის სახელი და დაამატოთ მინიმუმ ერთი სტუდენტი');
         }
     };
 
@@ -2334,6 +2317,7 @@ function showShutdownState() {
  messageElement.style.display = 'block'; 
  productContent.style.display = 'none'; 
  passwordForm.style.display = 'block'; // გამოჩნდეს პაროლის ფორმა 
+ 
  
  
  
@@ -2462,7 +2446,7 @@ document.addEventListener('DOMContentLoaded', function() {
         nameList.style.webkitOverflowScrolling = 'touch';
     }
 
-    // ღილაკების რესპონსივობის გაუმჯობესება
+    // ღილაკების რესპონსი��ობის გაუმჯობესება
     const buttons = document.querySelectorAll('button');
     buttons.forEach(button => {
         button.addEventListener('touchstart', function(e) {
@@ -2695,7 +2679,7 @@ function displayGroups(groups) {
 function createGroupsByGroupCount(numberOfGroups) {
     // შევამოწმოთ არის თუ არა საკმარისი სტუდენტები (მინიმუმ 2 სტუდენტი თითო ჯგფში)
     if (students.length < numberOfGroups * 2) {
-        alert(`ჯგუფები ვერ გაკეთდება. ${numberOfGroups} ჯგუფისთვის საჭიროა მინიმუმ ${numberOfGroups * 2} მოსწავლე (თითო ჯგუფში მინიმუმ 2 მოსწავლე)`);
+        alert(`ჯგუფები ვერ გაკეთდება. ${numberOfGroups} ჯგუფისთვის საჭიროა მინიმუმ ${numberOfGroups * 2} სტუდენტი (თითო ჯგუფში მინიმუმ 2 სტუდენტი)`);
         return;
     }
     
@@ -2776,6 +2760,37 @@ function initializeButtons() {
         }
     });
 }
+
+// PWA Installation
+let deferredPrompt;
+const installButton = document.getElementById('installPWA');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installButton.style.display = 'flex';
+
+    installButton.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+
+        const result = await deferredPrompt.prompt();
+        console.log(`Install prompt result: ${result.outcome}`);
+        
+        if (result.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+            installButton.style.display = 'none';
+        }
+        deferredPrompt = null;
+    });
+});
+
+window.addEventListener('appinstalled', () => {
+    installButton.style.display = 'none';
+    deferredPrompt = null;
+    console.log('PWA was installed');
+});
+
+// დანარჩენი JavaScript კოდი...
 </script>
 <script>
   
@@ -2818,149 +2833,5 @@ function initializeButtons() {
 		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
 	}
 	// ]]>
-    
 </script>
-<script>
-// დავამატოთ სტილიზებული კონსოლ ლოგები
-const logger = {
-    success: (msg) => console.log(`%c✅ ${msg}`, 'color: #4CAF50; font-weight: bold;'),
-    error: (msg) => console.log(`%c❌ ${msg}`, 'color: #f44336; font-weight: bold;'),
-    info: (msg) => console.log(`%cℹ️ ${msg}`, 'color: #2196F3; font-weight: bold;'),
-    warning: (msg) => console.log(`%c⚠️ ${msg}`, 'color: #FFC107; font-weight: bold;')
-};
-
-// ონლაინ/ოფლაინ სტატუსის მონიტორინგი
-function updateOnlineStatus() {
-    // შევქმნათ ან მოვძებნოთ სტატუსის ელემენტი
-    let status = document.getElementById('connectionStatus');
-    
-    // თუ ელემენტი არ არსებობს, შევქმნათ
-    if (!status) {
-        status = document.createElement('div');
-        status.id = 'connectionStatus';
-        status.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 1000;
-            display: none;
-            font-family: Arial, sans-serif;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        `;
-        document.body.appendChild(status);
-    }
-    
-    if (navigator.onLine) {
-        status.style.display = 'block';
-        status.style.backgroundColor = '#4CAF50';
-        status.textContent = '🟢 ონლაინ რეჟიმი';
-        logger.success('წარმატებით გადავედით ონლაინ რეჟიმში');
-        setTimeout(() => {
-            status.style.display = 'none';
-        }, 3000);
-    } else {
-        status.style.display = 'block';
-        status.style.backgroundColor = '#f44336';
-        status.textContent = '🔴 ოფლაინ რეჟიმი';
-        logger.warning('გადავედით ოფლაინ რეჟიმში');
-    }
-}
-
-// Service Worker-ის სტატუსის შემოწმება
-async function checkServiceWorkerStatus() {
-    try {
-        if ('serviceWorker' in navigator) {
-            const registration = await navigator.serviceWorker.getRegistration();
-            if (registration) {
-                logger.success('Service Worker აქტიურია');
-                logger.info(`Service Worker სტატუსი: ${registration.active ? 'აქტიური' : 'არააქტიური'}`);
-            } else {
-                logger.error('Service Worker არ არის რეგისტრირებული');
-            }
-        } else {
-            logger.error('ბრაუზერი არ უჭერს მხარს Service Worker-ს');
-        }
-    } catch (error) {
-        logger.error('Service Worker-ის შემოწმებისას მოხდა შეცდომა:', error);
-    }
-}
-
-// ქეშის სტატუსის შემოწმება
-async function checkCacheStatus() {
-    try {
-        const cache = await caches.open('student-selector-v1');
-        const keys = await cache.keys();
-        logger.info(`ქ��შირებული რესურსების რაოდენობა: ${keys.length}`);
-        keys.forEach(request => {
-            logger.info(`ქეშირებული: ${request.url}`);
-        });
-    } catch (error) {
-        logger.error('ქეშის შემოწმებისას მოხდა შეცდომა:', error);
-    }
-}
-
-// ოფლაინ მუშაობის ტესტი
-async function testOfflineCapability() {
-    try {
-        const response = await fetch(window.location.href);
-        if (response.ok) {
-            logger.success('აპლიკაცია წარმატებით ჩაიტვირთა');
-            return true;
-        } else {
-            logger.error(`ჩატვირთვის შეცდომა: ${response.status}`);
-            return false;
-        }
-    } catch (error) {
-        logger.error('ჩატვირთვის შეცდომა:', error);
-        return false;
-    }
-}
-
-// ინიციალიზაცია
-document.addEventListener('DOMContentLoaded', async () => {
-    logger.info('აპლიკაციის ინიციალიზაცია...');
-    
-    // სტატუსების შემოწმება
-    await checkServiceWorkerStatus();
-    await checkCacheStatus();
-    
-    // ონლაინ/ოფლაინ მონიტორინგის დაწყება
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-    updateOnlineStatus();
-    
-    // ინსტრუქციები კონსოლში
-    logger.info('ოფლაინ რეჟიმის ტესტირებისთვის:');
-    logger.info('1. გათიშეთ ინტერნეტი');
-    logger.info('2. განაახლეთ გვერდი (F5)');
-    logger.info('3. თუ გვერდი ჩაიტვირთა, ოფლაინ რეჟიმი მუშაობს');
-});
-
-// პერიოდული სტატუსის შემოწმება
-setInterval(async () => {
-    await checkServiceWorkerStatus();
-    await checkCacheStatus();
-}, 30000); // ყოველ 30 წამში ერთხელ
-
-</script>
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/class-and-class/sw.js', {
-                scope: '/class-and-class/'
-            })
-            .then(registration => {
-                console.log('ServiceWorker დარეგისტრირდა:', registration.scope);
-            })
-            .catch(error => {
-                console.log('ServiceWorker რეგისტრაცია ვერ მოხერხდა:', error);
-            });
-        });
-    }
-</script>
-</body>
-
-</html>
+</body></html>
