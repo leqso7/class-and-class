@@ -79,6 +79,9 @@
         function approveAccess() {
             const uniqueCode = localStorage.getItem('lastRequestCode');
             
+            // ვავამატოთ დროის დაყენება
+            localStorage.setItem('remainingTime', '31523908');
+            
             // ვინახავთ წვდომის ინფორმაციას IndexedDB-ში
             const request = indexedDB.open('siteAccess', 1);
             
