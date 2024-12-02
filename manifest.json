@@ -1,23 +1,24 @@
 {
-  "name": "გამარჯობა",
-  "short_name": "გამარჯობა",
-  "start_url": "/class-and-class/",
+  "name": "სტუდენტების შერჩევა",
+  "short_name": "შერჩევა",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
+  "theme_color": "#000000",
+  "description": "აპლიკაცია სტუდენტების შერჩევისთვის",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/class-and-class/icon-192x192.png",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/class-and-class/icon-512x512.png",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "scope": "/class-and-class/"
+  ]
 }
