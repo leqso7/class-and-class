@@ -157,7 +157,7 @@
             const uniqueCode = localStorage.getItem('uniqueCode');
             
             // თუ წვდომა აქვს და საიტი არ არის shutdown
-            if (accessApproved && siteStatus !== 'shutdown' && uniqueCode) {
+            if (accessApproved === 'true' && siteStatus !== 'shutdown' && uniqueCode) {
                 if (window.location.pathname.includes('request.html')) {
                     window.location.replace('index.html');
                 }
