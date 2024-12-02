@@ -1446,10 +1446,11 @@ function startCountdown() {
         clearInterval(timerInterval);
     }
     
+    // შევცვალოთ საწყისი დრო
     let savedTime = localStorage.getItem('remainingTime');
     
     if (!savedTime) {
-        savedTime = 10; // 10 წამი
+        savedTime = 31523908; // ახალი საწყისი დრო
         localStorage.setItem('remainingTime', savedTime);
     }
     
@@ -1473,7 +1474,7 @@ function startCountdown() {
     timerInterval = setInterval(updateTimer, 1000);
 }
 
-// დავამატოთ ეს ფუნქცია localStorage-ის ასასუფთავებლად როდესაც გვერ��ი იხურება
+// დავამატოთ ეს ფუნქცია localStorage-ის ასასუფთავებლად როდესაც გვერდი იხურება
 window.addEventListener('beforeunload', function() {
     // არ წავშალოთ countdownTime
     // localStorage.removeItem('countdownTime');
@@ -1838,7 +1839,7 @@ function updateButtonHighlighting() {
       if (students.length >= 5 && students.length <= 50 && size >= 2 && size <= 7) {
           if (students.length % size === 0 && students.length !== size) {
               button.classList.add('recommended', 'pulse');
-              button.title = `${students.length / size} ჯგუფი, თითოელში ${size} სტდენტით`;
+              button.title = `${students.length / size} ჯგუფი, თითოეულში ${size} სტუდენტით`;
           } else {
               button.classList.add('not-recommended');
               button.title = 'რათანბარი განაწილება';
@@ -2053,20 +2054,20 @@ function distributeGroups(groupSize) {
   }
   }
 
-  // ფუნქცია ყველა გამოყენებული აროლის გასაწმენდდ (ადინისტრატორისთვის)
+  // ფუნქცია ყველა გამოყენებული პაროლის გასაწმენდი (ადმინისტრატორისთვის)
   function resetUsedPasswords() {
   usedPasswords = [];
   localStorage.setItem('usedPasswords', JSON.stringify(usedPasswords));
-  alert('ყველა პაროი განულებულია.');
+  alert('ყველა პაროლი განულებულია.');
   }
 
   // ეს ფუნქცია შეგიძლიათ გამოიძახოთ საიტის გადატვირთვისას ან ახალი სესიის დაწყებისას
   function checkIfAllPasswordsUsed() {
   if (usedPasswords.length === passwords.length) {
-    alert('ყველა პაროლი გამოყნებულა. გთხოვთ, დაუკავშირდეთ ადმინისტრატორს.');
-    // ა შეგიძლიათ დაამატოთ დამატებითი ლოგიკა, მაგალითად, სიტის დაბლოკვა
+    alert('ყველა პაროლი გამოყენებულია. გთხოვთ, დაუკავშირდეთ ადმინისტრატორს.');
+    // აქ შეგიძლიათ დაამატოთ დამატებითი ლოგიკა, მაგალითად, საიტის დაბლოკვა
   }
-  }// ფუნქცია ვებსაიტის ჩამოსატვითად
+  }// ფუნქცია ვებსაიტის ჩამოსატვირთად
   function downloadWebsite() {
     // მთლიანი HTML-ის მიღება
     const fullHTML = document.documentElement.outerHTML;
@@ -2446,7 +2447,7 @@ document.addEventListener('DOMContentLoaded', function() {
         nameList.style.webkitOverflowScrolling = 'touch';
     }
 
-    // ღილაკების რესპონსი��ობის გაუმჯობესება
+    // ღილაკების რესპონსივობის გაუმჯობესება
     const buttons = document.querySelectorAll('button');
     buttons.forEach(button => {
         button.addEventListener('touchstart', function(e) {
@@ -2491,7 +2492,7 @@ function updateLayout() {
 document.addEventListener('DOMContentLoaded', function() {
     const accessApproved = localStorage.getItem('accessApproved');
     
-    // თუ წდომა ა აქვს დ არ მოდის request.html-დან
+    // თუ წდომა არ აქვს და არ მოდის request.html-დან
     if (!accessApproved && !document.referrer.includes('request.html')) {
         window.location.href = 'request.html';
     }
